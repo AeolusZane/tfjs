@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="./demos/15.speech-slider/scripts.js" type="module"></script>
+    <!-- <style>
+      #result > div {
+        float: left;
+        padding: 20px;
+      }
+    </style> -->
+    <style>
+      .slider {
+        width: 600px;
+        overflow: hidden;
+        margin: 10px auto;
+      }
+      .slider > div {
+        display: flex;
+        align-items: center;
+      }
+    </style>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script> -->
+  </head>
+  <body>
+    <!-- <input type="file" onchange="predict(this.files[0])" /> -->
+    <!-- <canvas width="300" height="300" style="border: 2px solid #666"></canvas>
+    <div>
+      <button onclick="window.clear();" style="margin: 4px">清除</button>
+      <button onclick="window.predict();" style="margin: 4px">预测</button>
+    </div> -->
+    <!-- <input type="file" onchange="predict(this.files[0])" />
+    <button onclick="download()">下载模型</button> -->
+    <!-- <div id="result"></div> -->
+    <!-- <button onclick="collect(this)">上一张</button>
+    <button onclick="collect(this)">下一张</button>
+    <button onclick="collect(this)">背景噪音</button>
+    <button onclick="save()">保存</button>
+    <pre id="count"></pre>
+    <button onclick="train()">训练</button>
+    <br /><br />
+    测试监听：<input type="checkbox" onchange="toggle(this.checked)" /> -->
+
+    <!-- <style>
+      .slider {
+        width: 600px;
+        overflow: hidden;
+        margin: 10px auto;
+      }
+      .slider > div {
+        display: flex;
+        align-items: center;
+      }
+    </style> -->
+    <div class="slider">
+      <div>
+        <img
+          src="https://cdn.pixabay.com/photo/2019/10/29/15/57/vancouver-4587302__480.jpg"
+          alt=""
+          width="600"
+        />
+        <img
+          src="https://cdn.pixabay.com/photo/2019/10/31/07/14/coffee-4591159__480.jpg"
+          alt=""
+          width="600"
+        />
+        <img
+          src="https://cdn.pixabay.com/photo/2019/11/01/11/08/landscape-4593909__480.jpg"
+          alt=""
+          width="600"
+        />
+        <img
+          src="https://cdn.pixabay.com/photo/2019/11/02/21/45/maple-leaf-4597501__480.jpg"
+          alt=""
+          width="600"
+        />
+        <img
+          src="https://cdn.pixabay.com/photo/2019/11/02/03/13/in-xinjiang-4595560__480.jpg"
+          alt=""
+          width="600"
+        />
+        <img
+          src="https://cdn.pixabay.com/photo/2019/11/01/22/45/reschensee-4595385__480.jpg"
+          alt=""
+          width="600"
+        />
+      </div>
+    </div>
+    监听开关：<input type="checkbox" onchange="toggle(this.checked)" />
+  </body>
+</html>

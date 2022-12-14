@@ -1,0 +1,25 @@
+{
+  "name": "yd-ai",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "parcel index.html"
+  },
+  "keywords": [],
+  "author": "志佳",
+  "license": "ISC",
+  "dependencies": {
+    "@tensorflow-models/speech-commands": "0.4.0",
+    "@tensorflow/tfjs": "^4.1.0",
+    "@tensorflow/tfjs-core": "^4.1.0",
+    "@tensorflow/tfjs-vis": "^1.5.1",
+    "parcel": "^2.8.0",
+    "seedrandom": "^3.0.5"
+  },
+  "devDependencies": {
+    "buffer": "^5.7.1",
+    "process": "^0.11.10",
+    "util": "^0.12.3"
+  }
+}

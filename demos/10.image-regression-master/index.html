@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>利用卷积神经网络算法识别车logo</title>
+  </head>
+  <body>
+    <img
+      src="https://img0.baidu.com/it/u=925926280,2863725&fm=253&fmt=auto&app=138&f=GIF?w=564&h=500"
+      id="some_image"
+      crossorigin="anonymous"
+      width="300px"
+    />
+    <input type="button" value="识别" id="test" />
+    <script src="./net/car.js"></script>
+    <script src="./net/convnet.js"></script>
+    <script type="text/javascript">
+      /*
+       *1.卷积层 ：提取图像特征 池化层：特征缩小 降维 防止过拟合
+       *2.全连接层：分类
+       *3.滤波器（卷积核）https://setosa.io/ev/image-kernels/
+              * https://cs231n.github.io/convolutional-networks/ 如何卷积
+            滤波器 3*3 套在图像上进行成绩求和 替换位于滤波器中心值
+       *4.典型CNN 卷积-池化-卷积-池化-全连接-全连接-全连接
+       *5.机器会为比较重要的滤波器赋予较高的权限 从而提高滤波器的器的效果
+       *6.池化层算法通常优两大类：取均值、取最大值 运行的步长最好是滤波器的大小
+       */
+      //神经网络
+      let layer_defs = [];
+      //输入层 100*100*3
+      layer_defs.push({
+        type: 'input',
+        out_sx: 100,
+        out_sy: 100,
+        out_depth: 3,
+      });
+      //卷积层
+      //filter+sx:多少个滤波器 用16个5*5的滤波器去卷积
+      //stride:步长
+      //padding:填充
+      //activation:激活函数 relu(还有有Tanh、Sigmoid等等函数)
+      layer_defs.push({
+        type: 'conv',
+        sx: 5,
+        filters: 16,
+        stride: 1,
+        pad: 2,
+        activation: 'relu',
+      });
+      //池化层
+      //池化层的滤波器 大小为2*2
+      //stride步长2
+      //内部无法看到他是使用平均值 还是使用最大值、什么类型滤波器
+      layer_defs.push({ type: 'pool', sx: 2, stride: 2 });
+      //反复的卷积池化
+      layer_defs.push({
+        type: 'conv',
+        sx: 5,
+        filters: 16,
+        stride: 1,
+        pad: 2,
+        activation: 'relu',
+      });
+      layer_defs.push({ type: 'pool', sx: 2, stride: 2 });
+      //分类器 输出10中类别
+      layer_defs.push({
+        type: 'softmax',
+        num_classes: 10,
+      });
+      //初始化神经网络
+      const net = new convnetjs.Net();
+      net.makeLayers(layer_defs);
+      //训练
+      //   {
+      //       data: train_x,
+      //       labels: train_y,
+      //       //训练次数
+      //       //iterations: 100,
+      //       //学习率
+      //       //learning_rate: 0.01,
+      //       //训练时间
+      //       //timeout: 100,
+      //       //训练过程中的回调函数
+      //       //callback: function(e) {
+      //       //  console.log(e);
+      //       //},
+      //     },
+      //     {
+      //       //训练次数
+      //       //iterations: 100,
+      //       //学习率
+      //       //learning_rate: 0.01,
+      //       //训练时间
+      //       //timeout: 100,
+      //       //训练过程中的回调函数
+      //       //callback: function(e) {
+      //       //  console.log(e);
+      //       //},
+      //     }
+      //随机梯度下降
+      const trainer = new convnetjs.SGDTrainer(net, {
+        //学习率
+        learning_rate: 0.01,
+        //加速梯度下降 优化器
+        momentum: 0.1,
+        batch_size: 5,
+        l2_decay: 0.0,
+      });
+
+      let imageList = [];
+      const loadData = (i) => {
+        return function () {
+          return new Promise(function (resolve, reject) {
+            let image = new Image();
+            image.crossOrigin = 'anonymous';
+            image.src = carList[i].url;
+            image.onload = function () {
+              //把图片矢量化
+              let vol = convnetjs.img_to_vol(image);
+              //加载成功一次训练一次
+              trainer.train(vol, i);
+              resolve();
+            };
+            image.onerror = reject;
+          });
+        };
+      };
+      for (let j = 0; j < carList.length; j++) {
+        imageList.push(loadData(j));
+      }
+      var testBtn = document.getElementById('test');
+      function training() {
+        testBtn.disabled = true;
+        return new Promise((resolve, reject) => {
+          Promise.all(imageList.map((imageContainer) => imageContainer())).then(
+            () => {
+              console.log('模型训练好了！！！👌');
+              testBtn.disabled = false;
+              resolve();
+            }
+          );
+        });
+      }
+      training().then(() => {
+        testBtn.addEventListener('click', () => {
+          // 告诉机器每一类对应的是什么（即让机器认识图片的过程）
+          const carNameList = [
+            '奥迪',
+            '奔驰',
+            '宝马',
+            '本田',
+            '别克',
+            '比亚迪',
+            '保时捷',
+            '大众',
+            '哈弗',
+          ];
+          //输入 页面中这张img 转化成矢量并且进行归一化操作
+          const x = convnetjs.img_to_vol(document.getElementById('some_image'));
+          // console.log(net.forward(x));
+          //取到最有可能性的类别
+          const result = Array.from(net.forward(x).w);
+          let max = Math.max.apply(Math, result);
+          console.log(
+            '最有可能的那个汽车logo🚗',
+            carNameList[result.indexOf(max)]
+          );
+          console.log('接着训练！！！💪');
+          training();
+        });
+      });
+    </script>
+  </body>
+</html>
